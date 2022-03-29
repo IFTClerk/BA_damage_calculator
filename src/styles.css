@@ -1,0 +1,58 @@
+body {
+    font-family: sans-serif;
+    background-color: Azure;
+}
+.separator {
+    height: 2px;
+    border-width: 0;
+    color: gray;
+    background-color: gray;
+}
+.num-input {
+    width: 3em;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border: 2px solid SkyBlue;
+    border-radius: 2px;
+    text-align: center;
+}
+.num-input.double-width {
+    width: 6em;
+}
+.stat-table {
+    border-collapse: collapse;
+    border-style: none;
+    border-width: 0px;
+}
+.stat-table td {
+    /* font-size: 14px; */
+    overflow-x: auto;
+    /* padding: 10px 5px; */
+    word-break: normal;
+    text-align: center;
+}
+.stat-table .stat-name {
+    width: 15%;
+}
+.stat-table .stat-value {
+    width: 10%;
+}
+.buff-table {
+    border-collapse: collapse;
+    border-style: none;
+    border-width: 0px;
+    overflow-x: auto;
+    word-break: normal;
+    text-align: center;
+}
+.buff-table .buff-name,.buff-table .buff-value {
+    width: 45%;
+}
+/*
+.buff-table .buff-value {
+    width: 60%;
+}
+*/
+.buff-table .buff-remove {
+    width: 10%;
+}
