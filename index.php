@@ -3,6 +3,17 @@
     $data_dir = 'data/';
     $char_data_dir = 'data/characters/';
     $skill_data_dir = 'data/skills/';
+
+    function fillSkillSelector($json_path) {
+        // PHP block to get all skill names
+        $skill_json = file_get_contents($json_path);
+        $data = json_decode($skill_json);
+        // loop over the keys of the json and add entry in selector
+        foreach ($data as $key => $value) {
+            // get display name and add to option list
+            echo '<option value="'.$key.'">'.$value->display_name.'</option>';
+        }
+    }
 ?>
 <html>
     <!-- HEAD -->
@@ -60,7 +71,7 @@
                 }
             ?>
 		</select>
-        <p>The content of this JSON is: <br><span id="json_content"></span></p>
+        <!-- <p>The content of this JSON is: <br><span id="json_content"></span></p> -->
         <!-- controls to enter various information -->
         <div id="source_input" style="display:none;">
             <!-- Character Details -->
@@ -139,7 +150,7 @@
             <hr class="separator">
         </div>
         <!-- Display Various Stat Bonuses -->
-        <div id="stat_bonuses">
+        <div id="stat_bonuses" style="display:none;">
             <h2> Stat Bonuses </h2>
             <div id="equipment_bonus">
                 <p> Equipment Bonus: <span id="equipment_bonus_value"></span> </p>
@@ -201,41 +212,16 @@
                     </tbody>
                 </table><br>
                 <label for="buff_select">Buff Presets: </label>
-                    <?php
-                        // PHP block to get all skill names
-                        $buff_skill_json = file_get_contents($skill_data_dir . 'buff.json');
-                        $data = json_decode($buff_skill_json);
-                        // initialise arrays to store buffs/debuffs
-                        $buffs = array();
-                        $debuffs = array();
-                        // loop over the keys of the json and separate into buffs/debuffs
-                        foreach ($data as $key => $value) {
-                            if (isset($value->value[0])) {
-                                // add to buffs if positive multiplier
-                                if ($value->value[0] >= 0) {
-                                    $buffs[$key] = $value;
-                                // add to debuffs if negative multiplier
-                                } elseif ($value->value[0] < 0) {
-                                    $debuffs[$key] = $value;
-                                }
-                            }
-                        }
-                    ?>
 		        <select id="buff_select">
-		            <option selected disabled value=""> --Select a buff to apply--</option>
+		            <option selected disabled value=""> --Select a (de)buff to apply--</option>
                     <optgroup label="Buffs">
                     <?php
-                        // get display name and add to option list
-                        foreach ($buffs as $key => $value) {
-                            echo '<option value="'.$key.'">'.$value->display_name.'</option>';
-                        }
+                        fillSkillSelector($skill_data_dir."buff.json");
                     ?>
                     </optgroup>
                     <optgroup label="Debuffs">
                     <?php
-                        foreach ($debuffs as $key => $value) {
-                            echo '<option value="'.$key.'">'.$value->display_name.'</option>';
-                        }
+                        fillSkillSelector($skill_data_dir."debuff.json");
                     ?>
                     </optgroup>
                 </select>
@@ -253,26 +239,12 @@
 		        <option selected disabled value=""> --Select a Skill--</option>
                 <optgroup label="Damage Skills">
                 <?php
-                    // PHP block to get all skill names
-                    $damage_skill_json = file_get_contents($skill_data_dir . 'damage.json');
-                    $data = json_decode($damage_skill_json);
-                    // loop over the keys of the json and add entry in selector
-                    foreach ($data as $key => $value) {
-                        // get display name and add to option list
-                        echo '<option value="'.$key.'">'.$value->display_name.'</option>';
-                    }
+                    fillSkillSelector($skill_data_dir.'damage.json');
                 ?>
                 </optgroup>
                 <optgroup label="Heal Skills">
                 <?php
-                    // PHP block to get all skill names
-                    $heal_skill_json = file_get_contents($skill_data_dir . 'heal.json');
-                    $data = json_decode($heal_skill_json);
-                    // loop over the keys of the json and add entry in selector
-                    foreach ($data as $key => $value) {
-                        // get display name and add to option list
-                        echo '<option value="'.$key.'">'.$value->display_name.'</option>';
-                    }
+                    fillSkillSelector($skill_data_dir.'heal.json');
                 ?>
                 </optgroup>
 		        <option value="custom"> Custom </option>
@@ -280,10 +252,10 @@
             <label for="attack_level">Attack Level: </label>
             <input class="num-input" type="number" id="attack_level" name="attack_level" value=1 min=1 max=5>
             <div id="attack_details">
-                Category:
-                <input checked type="radio" id="skill_damage" name="attack_category" value="damage">
+                Action:
+                <input checked type="radio" id="skill_damage" name="attack_action" value="damage">
                 <label for="skill_damage">Damage</label>
-                <input type="radio" id="skill_heal" name="attack_category" value="heal">
+                <input type="radio" id="skill_heal" name="attack_action" value="heal">
                 <label for="skill_heal">Heal</label><br>
                 <label for="attack_mult">Attack Multiplier: </label>
                 <input class="num-input allow-decimal double-width" type="number" id="attack_mult" name="attack_mult" value=0 min=0>&#37;
@@ -314,6 +286,8 @@
                     <td><input class="num-input double-width" type="number" id="target_crit_res" name="target_crit_res" value=100 min=0></td>
                     <td>Crit Dmg Res</td>
                     <td><input class="num-input double-width" type="number" id="target_crit_dmg_res" name="target_crit_dmg_res" value=5000 min=0></td>
+                    <td>Recovery</td>
+                    <td><input class="num-input double-width" type="number" id="target_recovery" name="target_recovery" value=10000 min=0></td>
                 </tr>
             </table>
             <label for="damage_reduction">Damage Reduction Modifier:</label>

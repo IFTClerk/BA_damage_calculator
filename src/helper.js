@@ -53,13 +53,14 @@ function printBonuses(bonus_array) {
     for (var i=0; i<bonus_array.length; i++) {
         const this_bonus = bonus_array[i];
         const display_name = stat_name_map[this_bonus.status] ? stat_name_map[this_bonus.status] : this_bonus.status;
-        if (stat_name_map[this_bonus.status]) {}
-        if (this_bonus.type==='mult') {
+        //if (stat_name_map[this_bonus.status]) {}
+        var sign = this_bonus.value>=0 ? '+' : '';
+        if (this_bonus.type=='mult') {
             // bonus_string_array.push(stat_name_map[this_bonus.status] + ':&nbsp;+' + (this_bonus.value * 100).toFixed(1) + '&#37;');
-            bonus_string_array.push(display_name + ':&nbsp;+' + (this_bonus.value * 100).toFixed(1) + '&#37;');
+            bonus_string_array.push(display_name + ':&nbsp;' + sign + this_bonus.value.toFixed(1) + '&#37;');
         } else {
             // bonus_string_array.push(stat_name_map[this_bonus.status] + ':&nbsp;+' + this_bonus.value);
-            bonus_string_array.push(display_name + ':&nbsp;+' + this_bonus.value);
+            bonus_string_array.push(display_name + ':&nbsp;' + sign + this_bonus.value);
         }
     }
     return bonus_string_array.join(', ');
@@ -116,7 +117,7 @@ function critDmgMult(bonus_array) {
     for (var i=0; i<bonus_array.length; i++) {
         const this_bonus = bonus_array[i];
         if (this_bonus.status=="crit_dmg" && this_bonus.type=="mult") {
-            return this_bonus.value;
+            return (this_bonus.value / 100);
         }
     }
     return 0.0;
@@ -129,5 +130,13 @@ function getArmourMult(atk, def) {
         return 0.5;
     } else {
         return 1.0;
+    }
+}
+
+// make element visible
+function makeVisible(eleid) {
+    var elem = document.getElementById(eleid);
+    if (elem.style.display==='none') {
+        elem.style.display = '';
     }
 }

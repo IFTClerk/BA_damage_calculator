@@ -27,8 +27,8 @@ function loadCharacterData() {
 function initialiseData(json_data) {
     current_source = json_data;
     // print json for debugging
-    const json_content = JSON.stringify(current_source);
-    document.getElementById('json_content').innerHTML = json_content;
+    //const json_content = JSON.stringify(current_source);
+    //document.getElementById('json_content').innerHTML = json_content;
     // initialise all the stats
     setEquipmentNames();
     setUEStatus();
@@ -38,10 +38,12 @@ function initialiseData(json_data) {
     setUEPassiveBonus();
     setEquipmentBonus();
     // show input panel for unit info
-    var source_input = document.getElementById('source_input');
-    if (source_input.style.display==='none') {
-        source_input.style.display = '';
-    }
+    makeVisible('source_input');
+    makeVisible('stat_bonuses');
+    //var source_input = document.getElementById('source_input');
+    //if (source_input.style.display==='none') {
+    //    source_input.style.display = '';
+    //}
 }
 // function to set base stat 
 function setBaseStat() {
@@ -74,7 +76,7 @@ function getBaseStat() {
             stat_value = interpolateStat(stat_value, current_level);
             stat_value *= (1 + star_level_multiplier[stat_name][current_stars - 1])
         }
-        stats[stat_name] = Math.ceil(stat_value);
+        stats[stat_name] = Math.round(stat_value);
     }
     return stats;
 }
@@ -91,7 +93,8 @@ function setUEStatus() {
     //const n_stars = char_stars.value;
     if (n_stars==5) {
         // Set UE entries to be visible if 5 starred
-        document.getElementById('unique_eq').style.display = '';
+        makeVisible('unique_eq');
+        //document.getElementById('unique_eq').style.display = '';
         // document.getElementById('ue_tier').value = 1;
     } else if (n_stars>=1 && n_stars<=4) {
         // Set UE entries to be invisible when under 5 stars
@@ -112,9 +115,9 @@ function setUEMaxLevel() {
     var ue_level = document.getElementById('ue_level');
     ue_level.max = ue_max;
     // cap the UE level
-    //if (ue_level.value>ue_max) {
-    ue_level.value = ue_max;
-    //}
+    if (ue_level.value>ue_max) {
+        ue_level.value = ue_max;
+    }
 }
 // set UE innate bonus stat display
 function setUEInnateBonus() {
@@ -248,19 +251,32 @@ function getTerrainMult() {
 }
 // set selected buff max level
 function setCurrentBuff() {
-    const selected_buff = document.getElementById('buff_select').value;
-    if (selected_buff!=="") {
-        // look for the buff in buff.json
-        fetch(Settings.skill_data_dir + 'buff.json')
+    const selected_buff = document.getElementById('buff_select');
+    if (selected_buff.value!=="") {
+        // see if buff or debuff is selected based on the optgroup
+        const action = selected_buff.options[selected_buff.selectedIndex].parentNode.label;
+        var json_name = '';
+        if (action==='Buffs') {
+            json_name = 'buff';
+        } else if (action==='Debuffs') {
+            json_name = 'debuff';
+        } else {
+            console.log('Invalid Buff selected');
+            return;
+        }
+        // look for the buff in the json
+        fetch(Settings.skill_data_dir + json_name + '.json')
             .then(response => response.json())
             .then(data => {
                 var buff_button = document.getElementById('button_add_buff');
                 buff_button.disabled = true;
-                current_buff = data[selected_buff];
+                current_buff = data[selected_buff.value];
                 //console.log(current_buff);
                 var buff_level = document.getElementById('buff_level');
                 buff_level.max = current_buff.value.length;
-                buff_level.value = buff_level.max;
+                if (buff_level.value > buff_level.max) {
+                    buff_level.value = buff_level.max;
+                }
                 buff_button.disabled = false;
             })
             .catch(error => console.log(error));
@@ -269,7 +285,8 @@ function setCurrentBuff() {
 // add buffs to the buff table
 function addBuff() {
     const buff_level = document.getElementById('buff_level').value;
-    buff_list.push({ "display_name": current_buff.display_name, "status": current_buff.status, "type": "mult", "value":current_buff.value[buff_level-1] });
+    const sign = current_buff.action=='buff' ? (+1) : (-1);
+    buff_list.push({ "display_name": current_buff.display_name, "level": buff_level, "status": current_buff.status, "type": current_buff.type, "value": sign*current_buff.value[buff_level-1] });
     //console.log(buff_list);
     setBuffTable();
 }
@@ -290,7 +307,7 @@ function setBuffTable() {
     for (var i=0; i<buff_list.length; i++) {
         this_buff = buff_list[i];
         const buff_text = printBonuses(this_buff);
-        const row = '<tr>' + '<td class="buff-name">' + this_buff.display_name + '</td>' +
+        const row = '<tr>' + '<td class="buff-name">' + this_buff.display_name + ' Lv' + this_buff.level + '</td>' +
             '<td class="buff-value">' + buff_text + '</td>' +
             '<td class="buff-remove"><input type="button" value="Remove" onclick="removeBuff(this)"></td>' + '</tr>';
         all_rows.push(row);
@@ -306,6 +323,7 @@ function getBuffBonus() {
 function setCurrentAttack() {
     const selected_attack = document.getElementById('attack_select');
     if (selected_attack.value!=="custom" && selected_attack.value!=="") {
+        // see if an attack or heal is selected
         const category = selected_attack.options[selected_attack.selectedIndex].parentNode.label;
         var json_name = '';
         if (category==='Damage Skills') {
@@ -320,9 +338,13 @@ function setCurrentAttack() {
             .then(response => response.json())
             .then(data => {
                 current_attack = data[selected_attack.value];
-                current_attack.category = json_name;
                 var attack_level = document.getElementById('attack_level');
-                attack_level.max = current_attack.value.length;
+                // limit max level for EX skills
+                if (current_attack.category=='ex') {
+                    attack_level.max = 5;
+                } else {
+                    attack_level.max = current_attack.value.length;
+                }
                 attack_level.value = attack_level.max;
                 setAttackInfo();
             })
@@ -338,9 +360,9 @@ function setAttackInfo() {
     var attack_mult = document.getElementById('attack_mult');
     var attack_nhits = document.getElementById('attack_nhits');
     const attack_level = document.getElementById('attack_level').value;
-    attack_mult.value = Math.round(current_attack.value[attack_level-1] * 100);
-    attack_nhits.value = current_attack.nhits || 1; 
-    document.getElementById('skill_'+current_attack.category).checked = true;
+    attack_mult.value = current_attack.value[attack_level-1];
+    //attack_nhits.value = current_attack.nhits || 1; 
+    document.getElementById('skill_'+current_attack.action).checked = true;
 }
 // set attack selector to 'custom' if user modifies the values
 function setCustomAttack() {
@@ -354,8 +376,8 @@ function setCustomAttack() {
 function getAttackInfo() {
     const attack_mult = document.getElementById('attack_mult').value / 100;
     const attack_nhits = document.getElementById('attack_nhits').value;
-    const attack_category = document.querySelector('input[name="attack_category"]:checked').value;
-    return { "multiplier": attack_mult, "n_hits": attack_nhits, "category": attack_category };
+    const attack_action = document.querySelector('input[name="attack_action"]:checked').value;
+    return { "multiplier": attack_mult, "n_hits": attack_nhits, "action": attack_action };
 }
 // collect all the bonuses and return a single list of bonuses
 function getTotalBonus() {
@@ -404,7 +426,7 @@ function getFinalStat() {
         // if (this_bonus.status=="crit_dmg" && this_bonus.type=="mult") continue;
         // ^^  this was fixed by applying crit_dmg modifiers to crit_dmg_resist later on
         if (final_stat[this_bonus.status]) {
-            final_stat[this_bonus.status] *= (1 + this_bonus.value);
+            final_stat[this_bonus.status] *= (1 + (this_bonus.value / 100));
             final_stat[this_bonus.status] = Math.ceil(final_stat[this_bonus.status]);
         }
     }
@@ -421,6 +443,7 @@ function getTargetInfo() {
     target_info.evasion = document.getElementById('target_evasion').value * 1;
     target_info.crit_res = document.getElementById('target_crit_res').value * 1;
     target_info.crit_dmg_res = document.getElementById('target_crit_dmg_res').value * 1;
+    target_info.recovery = document.getElementById('target_recovery').value * 1;
     // get misc modifiers
     target_info.damage_reduction = document.getElementById('damage_reduction').value / 100;
     target_info.additional_modifier = document.getElementById('additional_modifier').value / 100;
@@ -435,56 +458,62 @@ function calculateResults() {
     const target_info = getTargetInfo();
     // attack info
     const attack_info = getAttackInfo();
-    // get crit dmg res multiplier from total bonus
-    const total_bonus = getTotalBonus();
-    const crit_dmg_mult = critDmgMult(total_bonus);
-    //console.log(crit_dmg_mult);
-    // calculate some useful info
-    // damage reduction from target def stat
-    const defence_damage_multiplier = 1666.667 / (1666.667 + target_info.defence*1.0); //0.7 * Math.pow(0.99925, target_info.defence) + 0.3;
-    results.def_dmg_mult = defence_damage_multiplier;
-    // critical hit chance
-    const crit_net = Math.max(final_stat.crit - target_info.crit_res, 0.0);
-    const crit_chance = Math.min(crit_net / (crit_net + 666.66), 0.8);
-    results.crit_chance = crit_chance;
-    // critical damage
-    const crit_damage = Math.max((final_stat.crit_dmg - target_info.crit_dmg_res) * (1 + crit_dmg_mult) / 10000, 1.0);
-    results.crit_damage = crit_damage;
-    // damage floor (should have a min here shouldn't it?)
-    const damage_floor = Math.min(final_stat.stability / (final_stat.stability + 997) + 0.2, 1.0);
-    results.damage_floor = damage_floor;
-    // hit chance
-    const hit_chance = Math.min(700 / (Math.max(target_info.evasion - final_stat.accuracy, 0.0) + 700), 1.0);
-    results.hit_chance = hit_chance;
-    // terrain affinity multiplier
-    const terr_mult = getTerrainMult();
-    // armour type multiplier
-    const armour_mult = getArmourMult(current_source.damage_type, target_info.armour_type);
-    // calculate damages
-    // highest non-crit damage
-    const damage_high = final_stat.attack * attack_info.multiplier * terr_mult * armour_mult * defence_damage_multiplier * (1 - target_info.damage_reduction) * (1 + target_info.additional_modifier);
-    results.damage_high = damage_high; 
-    // lowest non-crit damage
-    const damage_low = damage_high * damage_floor;
-    results.damage_low = damage_low; 
-    // highest crit damage
-    const damage_crit_high = damage_high * crit_damage;
-    results.damage_crit_high = damage_crit_high; 
-    // lowest crit damage
-    const damage_crit_low = damage_crit_high * damage_floor;
-    results.damage_crit_low = damage_crit_low; 
-    // average non-crit damage
-    const damage_avg = (damage_high + damage_low) / 2;
-    results.damage_avg = damage_avg; 
-    // average crit damage
-    const damage_crit_avg = (damage_crit_high + damage_crit_low) / 2;
-    results.damage_crit_avg = damage_crit_avg; 
-    // average damage per hit
-    const damage_expectation = (damage_avg * crit_chance * crit_damage) + (damage_avg * (1 - crit_chance));
-    results.damage_expectation = damage_expectation; 
-    // average damage all hits
-    const damage_expectation_nhits = damage_expectation * attack_info.n_hits;
-    results.damage_expectation_nhits = damage_expectation_nhits; 
+    // damaging or healing skill
+    if (attack_info.action=='damage') {
+        // get crit dmg res multiplier from total bonus
+        const total_bonus = getTotalBonus();
+        const crit_dmg_mult = critDmgMult(total_bonus);
+        // calculate some useful info
+        // damage reduction from target def stat
+        const defence_damage_multiplier = 1666.667 / (1666.667 + target_info.defence*1.0); //0.7 * Math.pow(0.99925, target_info.defence) + 0.3;
+        results.def_dmg_mult = defence_damage_multiplier;
+        // critical hit chance
+        const crit_net = Math.max(final_stat.crit - target_info.crit_res, 0.0);
+        const crit_chance = Math.min(crit_net / (crit_net + 666.66), 0.8);
+        results.crit_chance = crit_chance;
+        // critical damage
+        const crit_damage = Math.max((final_stat.crit_dmg / 10000) - (target_info.crit_dmg_res * (1 + crit_dmg_mult) / 10000), 1.0);
+        results.crit_damage = crit_damage;
+        // damage floor (should have a min here shouldn't it?)
+        const damage_floor = Math.min(final_stat.stability / (final_stat.stability + 997) + 0.2, 1.0);
+        results.damage_floor = damage_floor;
+        // hit chance
+        const hit_chance = Math.min(700 / (Math.max(target_info.evasion - final_stat.accuracy, 0.0) + 700), 1.0);
+        results.hit_chance = hit_chance;
+        // terrain affinity multiplier
+        const terr_mult = getTerrainMult();
+        // armour type multiplier
+        const armour_mult = getArmourMult(current_source.damage_type, target_info.armour_type);
+        // calculate damages
+        // highest non-crit damage
+        const damage_high = final_stat.attack * attack_info.multiplier * terr_mult * armour_mult * defence_damage_multiplier * (1 - target_info.damage_reduction) * (1 + target_info.additional_modifier);
+        results.damage_high = damage_high; 
+        // lowest non-crit damage
+        const damage_low = damage_high * damage_floor;
+        results.damage_low = damage_low; 
+        // highest crit damage
+        const damage_crit_high = damage_high * crit_damage;
+        results.damage_crit_high = damage_crit_high; 
+        // lowest crit damage
+        const damage_crit_low = damage_crit_high * damage_floor;
+        results.damage_crit_low = damage_crit_low; 
+        // average non-crit damage
+        const damage_avg = (damage_high + damage_low) / 2;
+        results.damage_avg = damage_avg; 
+        // average crit damage
+        const damage_crit_avg = (damage_crit_high + damage_crit_low) / 2;
+        results.damage_crit_avg = damage_crit_avg; 
+        // average damage per hit
+        const damage_expectation = (damage_avg * crit_chance * crit_damage) + (damage_avg * (1 - crit_chance));
+        results.damage_expectation = damage_expectation; 
+        // average damage all hits
+        const damage_expectation_nhits = damage_expectation * attack_info.n_hits;
+        results.damage_expectation_nhits = damage_expectation_nhits; 
+    } else if (attack_info.action=='heal') {
+        const recovery = target_info.recovery / 10000.0;
+        results.target_recovery = recovery;
+        results.heal = final_stat.heal * attack_info.multiplier * recovery;
+    }
     return results;
 }
 // display results in the right div

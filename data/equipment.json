@@ -2,11 +2,13 @@
     "hat": [
         {
             "status": "attack",
+            "action": "buff",
             "type": "mult",
-            "value": [0.08, 0.13, 0.18, 0.25, 0.3, 0.35]
+            "value": [8, 13, 18, 25, 30, 35]
         },
         {
             "status": "crit_dmg",
+            "action": "buff",
             "type": "flat",
             "value": [0, 0, 0, 800, 1200, 1600]
         }
@@ -14,16 +16,19 @@
     "gloves": [
         {
             "status": "attack",
+            "action": "buff",
             "type": "mult",
-            "value": [0.064, 0.104, 0.144, 0.2, 0.25, 0.3]
+            "value": [6.4, 10.4, 14.4, 20, 25, 30]
         },
         {
             "status": "crit",
+            "action": "buff",
             "type": "flat",
             "value": [0, 0, 0, 70, 200, 300]
         },
         {
             "status": "accuracy",
+            "action": "buff",
             "type": "flat",
             "value": [0, 0, 0, 0, 0, 30]
         }
@@ -31,23 +36,27 @@
     "shoes": [
         {
             "status": "attack",
+            "action": "buff",
             "type": "mult",
-            "value": [0.04, 0.065, 0.09, 0.125, 0.2, 0.25]
+            "value": [4, 6.5, 9, 12.5, 20, 25]
         },
         {
             "status": "hp",
+            "action": "buff",
             "type": "mult",
-            "value": [0, 0, 0, 0.06, 0.09, 0.12]
+            "value": [0, 0, 0, 6, 9, 12]
         }
     ],
     "bag": [
         {
             "status": "hp",
+            "action": "buff",
             "type": "flat",
             "value": [600, 975, 1350, 1875, 3500, 5500]
         },
         {
             "status": "defence",
+            "action": "buff",
             "type": "flat",
             "value": [0, 0, 0, 1000, 1100, 1200]
         }
@@ -55,45 +64,53 @@
     "badge": [
         {
             "status": "hp",
+            "action": "buff",
             "type": "flat",
             "value": [800, 1300, 1800, 2500, 4500, 6500]
         },
         {
             "status": "recovery",
+            "action": "buff",
             "type": "flat",
             "value": [0, 0, 0, 1000, 2000, 3000]
         },
         {
             "status": "hp",
+            "action": "buff",
             "type": "mult",
-            "value": [0, 0, 0, 0, 0.1, 0.18]
+            "value": [0, 0, 0, 0, 10, 18]
         }
     ],
     "hairpin": [
         {
             "status": "hp",
+            "action": "buff",
             "type": "flat",
             "value": [400, 650, 950, 1250, 3000, 4500]
         },
         {
             "status": "cc_res",
+            "action": "buff",
             "type": "mult",
-            "value": [0, 0, 0, 0.1, 0.2, 0.24]
+            "value": [0, 0, 0, 10, 20, 24]
         }
     ],
     "charm": [
         {
             "status": "crit_res",
+            "action": "buff",
             "type": "flat",
             "value": [80, 130, 180, 250, 280, 320]
         },
         {
             "status": "crit_dmg_res",
+            "action": "buff",
             "type": "flat",
             "value": [0, 0, 0, 1000, 1500, 1800]
         },
         {
             "status": "crit",
+            "action": "buff",
             "type": "flat",
             "value": [0, 0, 0, 0, 120, 150]
         }
@@ -101,35 +118,41 @@
     "watch": [
         {
             "status": "crit",
+            "action": "buff",
             "type": "flat",
             "value": [80, 130, 180, 250, 280, 320]
         },
         {
             "status": "crit_dmg",
+            "action": "buff",
             "type": "flat",
             "value": [0, 0, 0, 1000, 1500, 1800]
         },
         {
             "status": "hp",
+            "action": "buff",
             "type": "mult",
-            "value": [0, 0, 0, 0, 0.05, 0.07]
+            "value": [0, 0, 0, 0, 5, 7]
         }
     ],
     "necklace": [
         {
             "status": "heal",
+            "action": "buff",
             "type": "mult",
-            "value": [0.08, 0.13, 0.18, 0.25, 0.28, 0.32]
+            "value": [8, 13, 18, 25, 28, 32]
         },
         {
             "status": "cc_strength",
+            "action": "buff",
             "type": "mult",
-            "value": [0.08, 0.13, 0.18, 0.25, 0.28, 0.32]
+            "value": [8, 13, 18, 25, 28, 32]
         },
         {
             "status": "attack",
+            "action": "buff",
             "type": "mult",
-            "value": [0, 0, 0, 0, 0.04, 0.06]
+            "value": [0, 0, 0, 0, 4, 6]
         }
     ]
 }
