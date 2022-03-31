@@ -1,6 +1,6 @@
 .*
 TODO
 data/characters/*
-data/characters_old/
 data/skills/*
-data/skills_old/
+data/*_old*
+
