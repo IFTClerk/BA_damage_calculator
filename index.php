@@ -300,7 +300,7 @@
         <!-- Display Formatted Results -->
         <div> 
             <h2>Results</h2>
-            <div id="results"></div>
+            <div id="results" class="results-container"></div>
             <hr class="separator">
         </div>
 	</body>

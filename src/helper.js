@@ -24,6 +24,22 @@ const stat_name_map = {
     "cc_res": "CC Res",
     "recovery": "Recovery"
 }
+// result variable display
+const result_name_map = {
+    "def_dmg_mult": "Defence Damage Multiplier",
+    "crit_chance": "Critical Chance",
+    "crit_damage": "Critical Damage",
+    "damage_floor": "Damage Floor",
+    "hit_chance": "Hit Chance",
+    "damage_high": "Highest Non-crit Damage",
+    "damage_low": "Lowest Non-crit Damage",
+    "damage_avg": "Average Non-crit Damage",
+    "damage_crit_high": "Highest Crit Damage",
+    "damage_crit_low": "Lowest Crit Damage",
+    "damage_crit_avg": "Average Crit Damage",
+    "damage_expectation": "Damage Expectation Value",
+    "heal": "Heal Value",
+}
 // weapon armour matchup chart
 const armour_resists = {
     "red": ["yellow", "purple"],

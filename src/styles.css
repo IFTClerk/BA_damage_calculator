@@ -48,11 +48,14 @@ body {
 .buff-table .buff-name,.buff-table .buff-value {
     width: 45%;
 }
-/*
-.buff-table .buff-value {
-    width: 60%;
-}
-*/
 .buff-table .buff-remove {
     width: 10%;
+}
+.results-container {
+    text-align: center;
+    width: 70%;
+    border: 2px solid Violet;
+}
+.results-container:empty {
+    border: 0px;
 }

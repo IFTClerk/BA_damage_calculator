@@ -511,7 +511,7 @@ function calculateResults() {
         results.damage_expectation_nhits = damage_expectation_nhits; 
     } else if (attack_info.action=='heal') {
         const recovery = target_info.recovery / 10000.0;
-        results.target_recovery = recovery;
+        //results.target_recovery = recovery;
         results.heal = final_stat.heal * attack_info.multiplier * recovery;
     }
     return results;
@@ -522,7 +522,8 @@ function setResults() {
     const results = calculateResults();
     var p_rows = [];
     for (var key of Object.keys(results)) {
-        p_rows.push('<p>' + key + ': ' + results[key] + '</p>');
+        const result_display_name = result_name_map[key] ? result_name_map[key] : key;
+        p_rows.push('<p>' + result_display_name + ': ' + results[key] + '</p>');
     }
     results_div.innerHTML = p_rows.join('\r\n');
 }
