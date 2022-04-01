@@ -52,7 +52,7 @@
         <hr class="separator">
         <h2> Character </h2>
 		<select id="character_source">
-		    <option disabled selected value=""> --Select a JSON-- </option>
+		    <option disabled selected value=""> --Select Character-- </option>
             <?php
                 // PHP block to retrieve list of characters from folder
                 $char_jsons = array();
