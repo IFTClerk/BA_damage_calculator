@@ -47,6 +47,7 @@
     </head>
     <!-- BODY -->
 	<body>
+        <noscript><table id="js_check" width="300px" border="1" bgcolor="red"><tr><td>Your browser does not support JavaScript. Things are not going to work properly.</td></tr></table></noscript>
         <!-- Title -->
         <h1> Blue Archive Damage Calculator v0</h1>
         <hr class="separator">
