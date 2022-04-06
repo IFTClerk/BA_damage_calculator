@@ -512,7 +512,9 @@ function calculateResults() {
     } else if (attack_info.action=='heal') {
         const recovery = target_info.recovery / 10000.0;
         //results.target_recovery = recovery;
-        results.heal = final_stat.heal * attack_info.multiplier * recovery;
+        const heal = final_stat.heal * attack_info.multiplier * recovery;
+        results.heal = heal;
+        results.heal_nhits = heal * attack_info.n_hits;
     }
     return results;
 }
