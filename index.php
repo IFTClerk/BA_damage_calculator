@@ -7,11 +7,14 @@
     function fillSkillSelector($json_path) {
         // PHP block to get all skill names
         $skill_json = file_get_contents($json_path);
-        $data = json_decode($skill_json);
+        $data = json_decode($skill_json, true);
+        // initialise key array
+        $data_keys = array_keys($data);
+        sort($data_keys);
         // loop over the keys of the json and add entry in selector
-        foreach ($data as $key => $value) {
+        foreach ($data_keys as $key) {
             // get display name and add to option list
-            echo '<option value="'.$key.'">'.$value->display_name.'</option>';
+            echo '<option value="'.$key.'">'.$data[$key]['display_name'].'</option>';
         }
     }
     if (! function_exists('str_ends_with')) {
